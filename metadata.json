@@ -1,0 +1,5 @@
+{
+  "name": "Kopi Kiosk - Coffee Shop POS",
+  "description": "A sleek and modern Point of Sale (POS) application designed for coffee shops. It allows cashiers to quickly add items to an order, view the total, and process payments. Features a 'Daily Special' suggestion powered by Gemini.",
+  "requestFramePermissions": []
+}

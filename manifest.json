@@ -1,0 +1,16 @@
+{
+  "short_name": "Kopi Kiosk",
+  "name": "Kopi Kiosk - Coffee Shop POS",
+  "description": "A sleek and modern Point of Sale (POS) application designed for coffee shops. Installable on your device for an app-like experience.",
+  "icons": [
+    {
+      "src": "/assets/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a"
+}
