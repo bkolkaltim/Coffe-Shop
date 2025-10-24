@@ -25,8 +25,9 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ isOpen, onClose, ite
   const orderDate = new Date().toLocaleString('id-ID');
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
+    <div id="receipt-modal-backdrop" className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
         <div 
+            id="receipt-modal-box"
             className="bg-slate-100 text-black rounded-lg shadow-2xl w-full max-w-sm m-4 flex flex-col"
             onClick={(e) => e.stopPropagation()}
         >

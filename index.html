@@ -25,37 +25,50 @@
         }
       }
       @media print {
-        .no-print {
+        /* Sembunyikan header dan konten utama aplikasi */
+        header, main {
           display: none !important;
         }
 
-        /* Reset body and hide all elements from the print layout by default */
+        /* Atur ulang gaya body untuk halaman cetak yang bersih */
         body {
-            background: white !important;
-            margin: 0 !important;
-            padding: 0 !important;
+          background: white !important;
+          margin: 0;
+          padding: 0;
         }
-        
-        body * {
-          visibility: hidden;
+
+        /* Jadikan modal struk sebagai satu-satunya elemen yang terlihat dan atur gayanya untuk dicetak */
+        #receipt-modal-backdrop {
+          display: block !important;
+          position: static !important;
+          background: none !important;
+          backdrop-filter: none !important;
+          width: 100%;
+          height: auto;
+          padding: 0;
+          margin: 0;
+          border: none;
+        }
+
+        /* Atur ulang kotak konten struk */
+        #receipt-modal-box {
           box-shadow: none !important;
           border: none !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          border-radius: 0 !important;
         }
         
-        /* Make only the receipt content and its children visible */
+        /* Sembunyikan tombol dan elemen lain yang tidak perlu dicetak */
+        .no-print {
+          display: none !important;
+        }
+        
+        /* Pastikan teks di dalam struk berwarna hitam agar terlihat saat dicetak */
         #receipt-content, #receipt-content * {
-          visibility: visible;
           color: black !important;
-        }
-        
-        /* Position the receipt at the very top of the print page, taking up the full width */
-        #receipt-content {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          margin: 0;
-          padding: 1rem;
           background: white !important;
         }
       }
