@@ -10,10 +10,12 @@ import { CustomerOrderingScreen } from './screens/CustomerOrderingScreen';
 import * as db from './services/db';
 import type { User, MenuItem, Discount } from './types';
 import { DEFAULT_TAX_RATE, DEFAULT_CATEGORIES, DEFAULT_DISCOUNTS } from './constants';
+import { CoffeeIcon } from './components/Icons';
 
 type Screen = 'login' | 'cashier' | 'dashboard' | 'kitchen' | 'transactions' | 'manageCashiers' | 'customerOrdering';
 
 function App() {
+  const [isInitializing, setIsInitializing] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const storedUser = sessionStorage.getItem('currentUser');
@@ -80,7 +82,6 @@ function App() {
   
   const fetchAllMenuRelatedData = useCallback(async () => {
     try {
-      await db.initializeDb();
       const items = await db.getAllMenuItems();
       setMenuItems(items);
       setCategories(JSON.parse(localStorage.getItem('categories') || JSON.stringify(DEFAULT_CATEGORIES)));
@@ -92,15 +93,17 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const initDB = async () => {
+    const initApp = async () => {
       try {
         await db.initializeDb();
         await fetchAllMenuRelatedData();
       } catch (error) {
-        console.error("Failed to initialize database:", error);
+        console.error("Failed to initialize the application:", error);
+      } finally {
+        setIsInitializing(false);
       }
     };
-    initDB();
+    initApp();
   }, [fetchAllMenuRelatedData]);
 
   const handleLoginSuccess = (user: User) => {
@@ -121,6 +124,11 @@ function App() {
     setCurrentUser(null);
     sessionStorage.removeItem('currentUser');
     navigate('login');
+  };
+  
+  const handleUserUpdate = (user: User) => {
+    setCurrentUser(user);
+    sessionStorage.setItem('currentUser', JSON.stringify(user));
   };
 
   const handleSaveDiscount = (discount: Omit<Discount, 'id'> | Discount) => {
@@ -153,6 +161,15 @@ function App() {
   const handleUpdateMenuItem = async (item: MenuItem) => { await db.updateMenuItem(item); fetchAllMenuRelatedData(); };
   const handleDeleteMenuItem = async (id: number) => { await db.deleteMenuItem(id); fetchAllMenuRelatedData(); };
 
+  if (isInitializing) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-900 text-slate-300">
+        <CoffeeIcon className="w-16 h-16 text-amber-500 animate-pulse" />
+        <p className="mt-4 text-lg text-slate-400">Menyiapkan kios...</p>
+      </div>
+    );
+  }
+
   const renderContent = () => {
     // The protective useEffect handles redirection, so we can render based on currentScreen.
     // We also check currentUser to prevent rendering components with incomplete props during the split-second of a redirect.
@@ -177,8 +194,10 @@ function App() {
               onNavigateToCashierManagement={() => navigate('manageCashiers')}
               onNavigateToTransactionLog={() => navigate('transactions')}
               onNavigateToCashierScreen={() => navigate('cashier')}
+              onNavigateToKitchenScreen={() => navigate('kitchen')}
               onOpenMenuManagement={() => setIsMenuManagementOpen(true)}
               onBack={handleLogout}
+              onUserUpdate={handleUserUpdate}
             />
           );
       case 'manageCashiers':

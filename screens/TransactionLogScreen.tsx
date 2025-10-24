@@ -10,9 +10,12 @@ interface TransactionLogScreenProps {
   onLogout: () => void;
 }
 
+const ORDERS_PER_PAGE = 10;
+
 export const TransactionLogScreen: React.FC<TransactionLogScreenProps> = ({ onBack, currentUser, onLogout }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filterStatus, setFilterStatus] = useState<string>('All'); // 'All', 'Pending', 'Approved', 'Prepared', 'Completed', 'Cancelled'
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -29,10 +32,19 @@ export const TransactionLogScreen: React.FC<TransactionLogScreenProps> = ({ onBa
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus]);
+
   const filteredOrders = orders.filter(order => {
     if (filterStatus === 'All') return true;
     return order.status === filterStatus;
   });
+
+  const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+  const indexOfLastOrder = currentPage * ORDERS_PER_PAGE;
+  const indexOfFirstOrder = indexOfLastOrder - ORDERS_PER_PAGE;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
 
   const getStatusClasses = (status: Order['status']) => {
     switch (status) {
@@ -71,58 +83,82 @@ export const TransactionLogScreen: React.FC<TransactionLogScreenProps> = ({ onBa
         {filteredOrders.length === 0 ? (
           <p className="text-slate-500 text-center py-16">Tidak ada pesanan yang ditemukan dengan status ini.</p>
         ) : (
-          <div className="bg-slate-800 rounded-lg shadow-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-slate-700">
-              <thead className="bg-slate-700">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    ID Pesanan
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Meja / Pelanggan
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Item
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Total
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Waktu
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-700">
-                {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-700/50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                      #{order.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
-                      Meja {order.tableNumber} {order.guestName ? `(${order.guestName})` : ''}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-300 max-w-xs truncate">
-                      {order.items.map(item => `${item.name} x${item.quantity}`).join(', ')}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-400">
-                      {formatCurrency(order.total)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClasses(order.status)}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
-                      {order.createdAt.toLocaleString()}
-                    </td>
+          <>
+            <div className="bg-slate-800 rounded-lg shadow-lg overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-700">
+                <thead className="bg-slate-700">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      ID Pesanan
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Meja / Pelanggan
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Item
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Total
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Waktu
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-700">
+                  {currentOrders.map((order) => (
+                    <tr key={order.id} className="hover:bg-slate-700/50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                        #{order.id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
+                        Meja {order.tableNumber} {order.guestName ? `(${order.guestName})` : ''}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-300 max-w-xs truncate">
+                        {order.items.map(item => `${item.name} x${item.quantity}`).join(', ')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-400">
+                        {formatCurrency(order.total)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClasses(order.status)}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                        {order.createdAt.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-700">
+                  <button
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      className="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                      Sebelumnya
+                  </button>
+                  <span className="text-slate-400">
+                      Halaman {currentPage} dari {totalPages}
+                  </span>
+                  <button
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                      className="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                      Berikutnya
+                  </button>
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
