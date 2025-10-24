@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { formatCurrency } from '../constants';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onC
 
         <div className="bg-slate-900 rounded-lg p-6 mb-6 text-center">
             <span className="text-slate-400 text-lg">Total Amount</span>
-            <p className="text-5xl font-extrabold text-amber-400 tracking-tight">{`$${total.toFixed(2)}`}</p>
+            <p className="text-5xl font-extrabold text-amber-400 tracking-tight">{formatCurrency(total)}</p>
         </div>
 
         <div className="space-y-4">

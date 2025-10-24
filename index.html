@@ -12,6 +12,8 @@
     <link rel="apple-touch-icon" href="/assets/icon.svg" />
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add sql.js for in-browser SQLite functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
     <style type="text/tailwindcss">
       @layer utilities {
         .scrollbar-hide::-webkit-scrollbar {
@@ -20,6 +22,41 @@
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
+        }
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+
+        /* Reset body and hide all elements from the print layout by default */
+        body {
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        body * {
+          visibility: hidden;
+          box-shadow: none !important;
+          border: none !important;
+        }
+        
+        /* Make only the receipt content and its children visible */
+        #receipt-content, #receipt-content * {
+          visibility: visible;
+          color: black !important;
+        }
+        
+        /* Position the receipt at the very top of the print page, taking up the full width */
+        #receipt-content {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          margin: 0;
+          padding: 1rem;
+          background: white !important;
         }
       }
     </style>

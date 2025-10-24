@@ -1,19 +1,41 @@
+import { MenuItem, Discount, User } from './types';
 
-import type { MenuItem } from './types';
+export const DEFAULT_TAX_RATE = 0.11; // 11%
 
-export const MENU_ITEMS: MenuItem[] = [
-  { id: 1, name: 'Espresso', category: 'Hot Coffee', price: 3.00, imageUrl: 'https://picsum.photos/id/225/400/300' },
-  { id: 2, name: 'Americano', category: 'Hot Coffee', price: 3.50, imageUrl: 'https://picsum.photos/id/431/400/300' },
-  { id: 3, name: 'Latte', category: 'Hot Coffee', price: 4.50, imageUrl: 'https://picsum.photos/id/30/400/300' },
-  { id: 4, name: 'Cappuccino', category: 'Hot Coffee', price: 4.50, imageUrl: 'https://picsum.photos/id/326/400/300' },
-  { id: 5, name: 'Mocha', category: 'Hot Coffee', price: 5.00, imageUrl: 'https://picsum.photos/id/365/400/300' },
-  { id: 6, name: 'Iced Coffee', category: 'Cold Coffee', price: 4.00, imageUrl: 'https://picsum.photos/id/1060/400/300' },
-  { id: 7, name: 'Cold Brew', category: 'Cold Coffee', price: 5.00, imageUrl: 'https://picsum.photos/id/1080/400/300' },
-  { id: 8, name: 'Iced Latte', category: 'Cold Coffee', price: 5.00, imageUrl: 'https://picsum.photos/id/175/400/300' },
-  { id: 9, name: 'Croissant', category: 'Pastries', price: 3.50, imageUrl: 'https://picsum.photos/id/368/400/300' },
-  { id: 10, name: 'Muffin', category: 'Pastries', price: 3.00, imageUrl: 'https://picsum.photos/id/201/400/300' },
-  { id: 11, name: 'Brownie', category: 'Pastries', price: 3.75, imageUrl: 'https://picsum.photos/id/429/400/300' },
-  { id: 12, name: 'Herbal Tea', category: 'Other', price: 3.00, imageUrl: 'https://picsum.photos/id/621/400/300' },
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+export const DEFAULT_CATEGORIES: string[] = ['Coffee', 'Pastry', 'Tea', 'Non-Coffee', 'Merchandise', 'Beans'];
+
+export const DEFAULT_DISCOUNTS: Discount[] = [
+    { id: 1, name: 'Promo Karyawan', percentage: 0.15 },
+    { id: 2, name: 'Diskon Pelajar', percentage: 0.10 },
 ];
 
-export const TAX_RATE = 0.08; // 8%
+export const INITIAL_USERS: User[] = [
+  { id: 1, username: 'manager', password: 'admin', role: 'manager' },
+  { id: 2, username: 'kasir', password: '123', role: 'cashier' },
+  { id: 3, username: 'dapur', password: 'masak', role: 'kitchen' },
+  { id: 4, username: 'pelanggan', password: 'pesan', role: 'customer' },
+];
+
+
+// Initial data to seed the database
+export const INITIAL_MENU_ITEMS: Omit<MenuItem, 'id'>[] = [
+  { name: 'Espresso', price: 18000, category: 'Coffee', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Espresso', stock: 100 },
+  { name: 'Americano', price: 20000, category: 'Coffee', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Americano', stock: 100 },
+  { name: 'Caffe Latte', price: 25000, category: 'Coffee', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Latte', stock: 80 },
+  { name: 'Cappuccino', price: 25000, category: 'Coffee', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Cappuccino', stock: 80 },
+  { name: 'Vanilla Latte', price: 28000, category: 'Coffee', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Vanilla+Latte', stock: 50 },
+  { name: 'Croissant', price: 15000, category: 'Pastry', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Croissant', stock: 30 },
+  { name: 'Pain au Chocolat', price: 18000, category: 'Pastry', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Pain+au+Chocolat', stock: 25 },
+  { name: 'Kouign-Amann', price: 22000, category: 'Pastry', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Kouign-Amann', stock: 5 },
+  { name: 'Iced Tea', price: 15000, category: 'Tea', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Iced+Tea', stock: 100 },
+  { name: 'Matcha Latte', price: 28000, category: 'Tea', imageUrl: 'https://placehold.co/400x400/1e293b/94a3b8?text=Matcha+Latte', stock: 40 },
+];

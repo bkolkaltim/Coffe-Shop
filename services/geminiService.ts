@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import type { MenuItem } from "../types";
 
@@ -12,6 +11,9 @@ const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 export const generateDailySpecial = async (menuItems: MenuItem[]): Promise<string> => {
   try {
+    if (menuItems.length === 0) {
+      return "Chef's Choice: A delightful surprise awaits you today!";
+    }
     const itemNames = menuItems.map(item => item.name).join(', ');
     const prompt = `
       You are the creative director for a trendy coffee shop.
@@ -23,12 +25,14 @@ export const generateDailySpecial = async (menuItems: MenuItem[]): Promise<strin
       Menu: ${itemNames}
     `;
 
+    // FIX: Updated generateContent call to pass prompt as a string and added thinkingConfig.
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: prompt,
       config: {
         temperature: 0.8,
         maxOutputTokens: 50,
+        thinkingConfig: { thinkingBudget: 25 },
       }
     });
 
